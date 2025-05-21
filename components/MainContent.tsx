@@ -8,6 +8,7 @@ import Products from "./tables/Products";
 import Services from "./tables/Services";
 import Notifications from "./tables/Notifications";
 import Analytics from "./tables/Analytics";
+import NotificationTemplates from "./tables/NotificationTemplates";
 
 interface MainContentProps {
   user: any;
@@ -156,6 +157,11 @@ export default function MainContent({
                 <Notifications
                   currentData={currentData}
                   handleDeleteUser={handleDeleteUser}
+                  formatDate={formatDate}
+                />
+              ) : activeTable === "notification_templates" ? (
+                <NotificationTemplates
+                  currentData={currentData}
                   formatDate={formatDate}
                 />
               ) : activeTable === "analytics" ? (

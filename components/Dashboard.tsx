@@ -248,6 +248,14 @@ export default function DashboardPage() {
           .select("*");
         if (error) throw error;
         setTableData(pushTokens || []);
+      } else if (tableName === "notification_templates") {
+        // Fetch notification templates
+        const { data: templates, error } = await supabase
+          .from("notification_templates")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        setTableData(templates || []);
       } else {
         const { data, error } = await supabase.from(tableName).select("*");
         if (error) throw error;
