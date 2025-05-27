@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -72,7 +72,7 @@ export default function DashboardPage() {
           supabase
             .from("services")
             .select("id", { count: "exact", head: true }),
-          supabaseAdmin.auth.admin.listUsers(),
+          supabase.auth.admin.listUsers(),
           supabase
             .from("users")
             .select("last_sign_in_at")
@@ -117,25 +117,8 @@ export default function DashboardPage() {
         ]);
         return;
       } else if (tableName === "users") {
-        // Get auth users for last sign in
-        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-
-        // Get custom users
-        const { data: usersData, error } = await supabase
-          .from("users")
-          .select("*");
-        if (error) throw error;
-
-        // Combine auth data with custom users
-        const combinedUsers =
-          usersData?.map((user) => ({
-            ...user,
-            last_sign_in_at: authUsers?.users?.find(
-              (auth) => auth.email === user.email
-            )?.last_sign_in_at,
-          })) || [];
-
-        setTableData(combinedUsers);
+        await fetchUsersWithAuth();
+        return;
       } else if (tableName === "providers" || tableName === "sellers") {
         const { data, error } = await supabase
           .from("providers")
@@ -306,8 +289,7 @@ export default function DashboardPage() {
         setTables(filteredTables);
 
         // Get auth users for last sign in
-        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-        console.log("Auth users:", authUsers);
+        await fetchUsersWithAuth();
 
         // Get custom users
         const { data: usersData } = await supabase.from("users").select("*");
@@ -317,9 +299,8 @@ export default function DashboardPage() {
         const combinedUsers =
           usersData?.map((user) => ({
             ...user,
-            last_sign_in_at: authUsers?.users?.find(
-              (auth) => auth.email === user.email
-            )?.last_sign_in_at,
+            last_sign_in_at: users?.find((auth) => auth.email === user.email)
+              ?.last_sign_in_at,
           })) || [];
 
         setUsers(combinedUsers);
@@ -358,15 +339,24 @@ export default function DashboardPage() {
     const confirmed = window.confirm(
       `Are you sure you want to delete the user ${
         userToDelete?.email || userId
-      }?\n\n` + "This action cannot be undone."
+      }?\n\nThis action cannot be undone.`
     );
 
     if (!confirmed) return;
 
     try {
       setLoading(true);
-      const { error } = await supabase.from("users").delete().eq("id", userId);
+      // Call the API route to delete the user from Supabase Auth
+      const res = await fetch("/api/delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete user");
 
+      // Delete from the users table as well
+      const { error } = await supabase.from("users").delete().eq("id", userId);
       if (error) throw error;
 
       // Refresh the users list
@@ -375,9 +365,9 @@ export default function DashboardPage() {
 
       // Show success message
       alert("User deleted successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting user:", error);
-      alert("Failed to delete user. Please try again.");
+      alert("Failed to delete user. " + (error.message || "Please try again."));
     } finally {
       setLoading(false);
     }
@@ -462,6 +452,22 @@ export default function DashboardPage() {
   }, [searchQuery]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  // Replace fetchTableData and fetchData logic for users with API call
+  const fetchUsersWithAuth = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/users-with-auth");
+      if (!res.ok) throw new Error("Failed to fetch users");
+      const users = await res.json();
+      setTableData(users);
+      setUsers(users);
+    } catch (error) {
+      console.error("Error fetching users with auth:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (

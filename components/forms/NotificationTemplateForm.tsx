@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 
-type NotificationType = "basic" | "rich" | "interactive";
+type NotificationType = "basic" | "rich" | "interactive" | "critical";
 
 interface NotificationTemplateFormProps {
   onSuccess: () => void;
@@ -22,6 +22,7 @@ export default function NotificationTemplateForm({
     screen: "",
     params: "",
     notification_type: "basic" as NotificationType,
+    required_version: "",
     is_active: true,
   });
 
@@ -45,6 +46,13 @@ export default function NotificationTemplateForm({
     if (formData.button_link && !formData.button_text) {
       newErrors.button_text =
         "Button text is required when button link is provided";
+    }
+    if (
+      formData.notification_type === "critical" &&
+      !formData.required_version.trim()
+    ) {
+      newErrors.required_version =
+        "Required version is mandatory for critical notifications";
     }
 
     setErrors(newErrors);
@@ -75,6 +83,7 @@ export default function NotificationTemplateForm({
         screen: "",
         params: "",
         notification_type: "basic",
+        required_version: "",
         is_active: true,
       });
       setErrors({});
@@ -193,6 +202,7 @@ export default function NotificationTemplateForm({
               <option value="basic">Basic</option>
               <option value="rich">Rich</option>
               <option value="interactive">Interactive</option>
+              <option value="critical">Critical</option>
             </select>
           </div>
         </div>
@@ -422,6 +432,29 @@ export default function NotificationTemplateForm({
               </div>
             </div>
           </>
+        )}
+
+        {formData.notification_type === "critical" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">
+              Required Version *
+            </label>
+            <input
+              type="text"
+              name="required_version"
+              value={formData.required_version}
+              onChange={handleChange}
+              className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#fa5b00] ${
+                errors.required_version ? "border-red-500" : "border-[#333]"
+              }`}
+              placeholder="Enter required version (e.g. 2.0.1)"
+            />
+            {errors.required_version && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.required_version}
+              </p>
+            )}
+          </div>
         )}
 
         <div className="flex items-center">
