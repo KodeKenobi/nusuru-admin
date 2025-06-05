@@ -337,7 +337,7 @@ export default function Products({
                 <span>Created: {formatDate(product.created_at)}</span>
                 {product.seller_id && <span>Seller: {product.seller_id}</span>}
               </div>
-              <div className="flex justify-end space-x-2 pt-2">
+              <div className="flex justify-start space-x-2 pt-2">
                 {product.status !== "approved" && (
                   <button
                     onClick={() => handleApprove(product)}

@@ -286,7 +286,7 @@ export default function Services({
                   </div>
                 )}
               </div>
-              <div className="flex justify-end space-x-2 pt-2">
+              <div className="flex justify-start space-x-2 pt-2">
                 {!service.approved && (
                   <>
                     <button

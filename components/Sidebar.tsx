@@ -343,36 +343,36 @@ export default function Sidebar({
                   </button>
                 );
               }
-              return (
-                <button
-                  key={table.table_name}
-                  onClick={() => setActiveTable(table.table_name)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-                    activeTable === table.table_name
-                      ? "text-white bg-[#fa5b00]/10"
-                      : "text-[#888] hover:text-white hover:bg-[#fa5b00]/5"
-                  } hover:scale-[1.04] transition-transform duration-200 hover:bg-[#fa5b00]/80`}
-                >
-                  <svg
-                    className={`w-5 h-5 ${
-                      activeTable === table.table_name ? "text-[#fa5b00]" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="capitalize">
-                    {table.table_name.replace(/_/g, " ")}
-                  </span>
-                </button>
-              );
+              // return (
+              //   <button
+              //     key={table.table_name}
+              //     onClick={() => setActiveTable(table.table_name)}
+              //     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+              //       activeTable === table.table_name
+              //         ? "text-white bg-[#fa5b00]/10"
+              //         : "text-[#888] hover:text-white hover:bg-[#fa5b00]/5"
+              //     } hover:scale-[1.04] transition-transform duration-200 hover:bg-[#fa5b00]/80`}
+              //   >
+              //     <svg
+              //       className={`w-5 h-5 ${
+              //         activeTable === table.table_name ? "text-[#fa5b00]" : ""
+              //       }`}
+              //       fill="none"
+              //       stroke="currentColor"
+              //       viewBox="0 0 24 24"
+              //     >
+              //       <path
+              //         strokeLinecap="round"
+              //         strokeLinejoin="round"
+              //         strokeWidth={2}
+              //         d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              //       />
+              //     </svg>
+              //     <span className="capitalize">
+              //       {table.table_name.replace(/_/g, " ")}
+              //     </span>
+              //   </button>
+              // );
             })}
             {/* Analytics Button (now just after the other nav buttons) */}
             <button

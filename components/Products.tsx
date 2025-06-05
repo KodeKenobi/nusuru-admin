@@ -126,7 +126,7 @@ export default function Products({ data, onDelete, onEdit }: ProductsProps) {
               </span>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-2">
+            {/* <div className="">
               {product.status !== "approved" && (
                 <button
                   onClick={() => handleApprove(product)}
@@ -153,7 +153,7 @@ export default function Products({ data, onDelete, onEdit }: ProductsProps) {
               >
                 Delete
               </button>
-            </div>
+            </div> */}
           </div>
         </motion.div>
       ))}
